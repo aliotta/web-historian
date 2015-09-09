@@ -10,14 +10,23 @@ exports.headers = headers = {
   'Content-Type': "text/html"
 };
 
-exports.serveAssets = function(res, asset, callback) {
-  // Write some code here that helps serve up your static files!
-  // (Static files are things like html (yours or archived from others...),
-  // css, or anything that doesn't change often.)
+var mimeTypes = {
+  "html": "text/html",
+  "jpeg": "image/jpeg",
+  "jpg": "image/jpeg",
+  "png": "image/png",
+  "js": "text/javascript",
+  "css": "text/css",
 };
 
-  // Write some code here that helps serve up your static files!
-  // (Static files are things like html (yours or archived from others...),
-  // css, or anything that doesn't change often.)
-
-// As you progress, keep thinking about what helper functions you can put here!
+exports.serveAsset = function(res, asset, callback) {
+  console.log("ASSET PATH")
+  console.log(asset)
+  var mimeType = mimeTypes[path.extname(asset).split(".")[1]]
+  res.writeHead(200, {'Content-Type' : mimeType})
+  var fileStream = fs.createReadStream(asset);
+  // var contents = fs.readFileSync(asset).toString();
+  // console.log("CONTENTS BELOW");
+  // console.log(contents);
+  fileStream.pipe(res);
+};
