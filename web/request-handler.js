@@ -14,6 +14,7 @@ exports.handleRequest = function (req, res) {
   //     httpHelper(res, _assett_, _cb_)
   // })
   if(req.method === "POST"){
+    // res.end('hi')
     var data = '';
     console.log(req);
 
@@ -23,36 +24,39 @@ exports.handleRequest = function (req, res) {
 
     req.on('end',function(){
       console.log("Our Data " + data + "end")
-      httpHelper.postSite(res, data, function(){});
-      // var obj = JSON.parse(data);
-      //console.log(obj);
-      });
+      console.log(typeof data)
+      httpHelper.postSite(res, JSON.parse(data).url, function(){});
+      var obj = JSON.parse(data);
+      console.log(obj);
+    });
   }
 
-  var sitePath = path.join(__dirname, '../archives/sites/', req.url)
-  if (req.method === "GET") {
-    fs.stat(sitePath, function(err, stat) {
-      if(err || stat.isDirectory()){
-        fs.stat(filePath, function(err, stat) {
-            if (req.url === '/') {
-              httpHelper.serveAsset(res, path.join(__dirname, '/public/index.html'), function() {console.log("CALLLBACK")})
-            }
-            else if(err == null) {
-              httpHelper.serveAsset(res, filePath, function() {console.log("CALLLBACK")})
-            } 
-            else if(err.code == 'ENOENT') {
-              console.log("404");
-              res.writeHead(404);
-              res.end();
-            } else {
-              console.log('Some other error: ', err.code);
-            }
-        });
-      } else {
-        httpHelper.getSite(res, sitePath, function(){  
-        });
-      }
-    });
+  else {
+    var sitePath = path.join(__dirname, '../archives/sites/', req.url)
+    if (req.method === "GET") {
+      fs.stat(sitePath, function(err, stat) {
+        if(err || stat.isDirectory()){
+          fs.stat(filePath, function(err, stat) {
+              if (req.url === '/') {
+                httpHelper.serveAsset(res, path.join(__dirname, '/public/index.html'), function() {console.log("CALLLBACK")})
+              }
+              else if(err == null) {
+                httpHelper.serveAsset(res, filePath, function() {console.log("CALLLBACK")})
+              } 
+              else if(err.code == 'ENOENT') {
+                console.log("404");
+                res.writeHead(404);
+                res.end();
+              } else {
+                console.log('Some other error: ', err.code);
+              }
+          });
+        } else {
+          httpHelper.getSite(res, sitePath, function(){  
+          });
+        }
+      });
+    }
   }  
     
 

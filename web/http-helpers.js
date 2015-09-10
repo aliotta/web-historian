@@ -19,6 +19,10 @@ var mimeTypes = {
   "css": "text/css",
 };
 
+exports.setMime = function(res, mime) {
+  res.writeHead(200, {'Content-Type' : mime})
+};
+
 exports.serveAsset = function(res, asset, callback) {
   var mimeType = mimeTypes[path.extname(asset).split(".")[1]]
   res.writeHead(200, {'Content-Type' : mimeType})
@@ -29,7 +33,7 @@ exports.serveAsset = function(res, asset, callback) {
 
 exports.getSite = function(res, sitePath, callback) {
   console.log("Site Name " + sitePath)
-  
+
   fs.readFile(sitePath, function(err, data){
     if(err){
       console.log("Error")
@@ -41,16 +45,30 @@ exports.getSite = function(res, sitePath, callback) {
   })
 }
 
-exports.postSite = function(res, site, callback){
-  fs.appendFile(path.join(__dirname, '../archives/sites.txt'), site.split("=")[1] + "\n", function (err) {
-    if(err){
-      res.end("FAIL");
-      console.log("failed to append data")
-    } else {
-      res.writeHead(302);
-      res.end("success");
-      console.log("Successful Append")
+exports.postSite = function(res, url, callback){
+  archive.isUrlInList(url, function(is) {
+    if (is) {
+      archive.isUrlArchived(url, function(is) {
+        if (is) {
+          res.end(url);
+        }
+        else {
+          res.end('redirect.html');
+        }
+      })
     }
-  });
-  console.log("posted")
+    else {
+      fs.appendFile(archive.paths.list, url + "\n", function (err) {
+        if(err){
+          res.end("FAIL");
+          console.log("failed to append data")
+        } else {
+          res.writeHead(302);
+          res.end('redirect.html')
+          // res.end("success");
+          console.log("Successful Append")
+        }
+      });
+    }
+  })
 }

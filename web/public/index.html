@@ -19,9 +19,12 @@
         data: JSON.stringify({url : $("input").val()}),
         dataType: "application/JSON"
 
-      }).success(function(){
-        console.log("AJAX Posted") 
-      }) 
+      }).complete(function(data){
+        window.location = data.responseText;
+        
+      }).error(function(err){
+        console.log(err)
+      })
     })
   </script>
 </body>

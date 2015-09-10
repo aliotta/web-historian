@@ -36,6 +36,8 @@ exports.readListOfUrls = function(cb) {
 exports.isUrlInList = function(url, cb) {
 
   exports.readListOfUrls(function(urls){
+    console.log("URL TO COMPARE : " + url)
+    console.log("ALL URLS : " + urls)
     cb(urls.indexOf(url) > -1);
   })
 };
