@@ -7,6 +7,22 @@
   Enter a URL here:
   <form method="POST">
     <input type="input" name="url"></input>
+    <script type="text/javascript" src="./jquery.js"></script>
   </form>
+  <button class="submit">Submit</button>
+  <script type="text/javascript">
+    $(".submit").click(function(e){
+      console.log($("input").val());
+      $.ajax({
+        url: "http://127.0.0.1:8080",
+        type: "POST",
+        data: JSON.stringify({url : $("input").val()}),
+        dataType: "application/JSON"
+
+      }).success(function(){
+        console.log("AJAX Posted") 
+      }) 
+    })
+  </script>
 </body>
 </html>

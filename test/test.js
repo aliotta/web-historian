@@ -6,11 +6,11 @@ var path = require('path');
 var supertest = require('supertest');
 var initialize = require("../web/initialize.js");
 
-initialize(path.join(__dirname, '/testdata'));
+initialize(path.join(__dirname, '../archives'));
 
 archive.initialize({
-  archivedSites: path.join(__dirname, '/testdata/sites'),
-  list: path.join(__dirname, "/testdata/sites.txt")
+  archivedSites: path.join(__dirname, '../archives/sites'),
+  list: path.join(__dirname, "../archives/sites.txt")
 });
 
 var request = supertest.agent(server);
@@ -66,6 +66,8 @@ describe("server", function() {
           .expect(302, function (err) {
             if (!err) {
               var fileContents = fs.readFileSync(archive.paths.list, 'utf8');
+              console.log(fileContents);
+              console.log("archive Path" +archive.paths.list)
               expect(fileContents).to.equal(url + "\n");
             }
 
@@ -76,83 +78,83 @@ describe("server", function() {
   });
 });
 
-// describe("archive helpers", function(){
-//   describe("#readListOfUrls", function () {
-//     it("should read urls from sites.txt", function (done){
-//       var urlArray = ["example1.com", "example2.com"];
-//       fs.writeFileSync(archive.paths.list, urlArray.join("\n"));
+describe("archive helpers", function(){
+  describe("#readListOfUrls", function () {
+    it("should read urls from sites.txt", function (done){
+      var urlArray = ["example1.com", "example2.com"];
+      fs.writeFileSync(archive.paths.list, urlArray.join("\n"));
 
-//       archive.readListOfUrls(function(urls){
-//         expect(urls).to.deep.equal(urlArray);
-//         done();
-//       });
-//     });
-//   });
+      archive.readListOfUrls(function(urls){
+        expect(urls).to.deep.equal(urlArray);
+        done();
+      });
+    });
+  });
 
-//   describe("#isUrlInList", function () {
-//     it("should check if a url is in the list", function (done) {
-//       var urlArray = ["example1.com", "example2.com"];
-//       fs.writeFileSync(archive.paths.list, urlArray.join("\n"));
+  describe("#isUrlInList", function () {
+    it("should check if a url is in the list", function (done) {
+      var urlArray = ["example1.com", "example2.com"];
+      fs.writeFileSync(archive.paths.list, urlArray.join("\n"));
 
-//       var counter = 0;
-//       var total = 2;
+      var counter = 0;
+      var total = 2;
 
-//       archive.isUrlInList("example1.com", function (is) {
-//         expect(is);
-//         if (++counter == total) { done() }
-//       });
+      archive.isUrlInList("example1.com", function (is) {
+        expect(is);
+        if (++counter == total) { done() }
+      });
 
-//       archive.isUrlInList("gibberish", function (is) {
-//         expect(!is);
-//         if (++counter == total) { done() }
-//       });
-//     });
-//   });
+      archive.isUrlInList("gibberish", function (is) {
+        expect(!is);
+        if (++counter == total) { done() }
+      });
+    });
+  });
 
-//   describe("#addUrlToList", function () {
-//     it("should add a url to the list", function (done) {
-//       var urlArray = ["example1.com", "example2.com\n"];
-//       fs.writeFileSync(archive.paths.list, urlArray.join("\n"));
+  describe("#addUrlToList", function () {
+    it("should add a url to the list", function (done) {
+      var urlArray = ["example1.com", "example2.com\n"];
+      fs.writeFileSync(archive.paths.list, urlArray.join("\n"));
 
-//       archive.addUrlToList("someurl.com", function () {
-//         archive.isUrlInList("someurl.com", function (is) {
-//           expect(is);
-//           done();
-//         });
-//       });
-//     });
-//   });
+      archive.addUrlToList("someurl.com", function () {
+        archive.isUrlInList("someurl.com", function (is) {
+          expect(is);
+          done();
+        });
+      });
+    });
+  });
 
-//   describe("#isUrlArchived", function () {
-//     it("should check if a url is archived", function (done) {
-//       fs.writeFileSync(archive.paths.archivedSites + "/www.example.com", "blah blah");
+  describe("#isUrlArchived", function () {
+    it("should check if a url is archived", function (done) {
+      fs.writeFileSync(archive.paths.archivedSites + "/www.example.com", "blah blah");
 
-//       var counter = 0;
-//       var total = 2;
+      var counter = 0;
+      var total = 2;
 
-//       archive.isUrlArchived("www.example.com", function (exists) {
-//         expect(exists);
-//         if (++counter == total) { done() }
-//       });
+      archive.isUrlArchived("www.example.com", function (exists) {
+        expect(exists);
+        if (++counter == total) { done() }
+      });
 
-//       archive.isUrlArchived("www.notarchived.com", function (exists) {
-//         expect(!exists);
-//         if (++counter == total) { done() }
-//       });
-//     });
-//   });
+      archive.isUrlArchived("www.notarchived.com", function (exists) {
+        expect(!exists);
+        if (++counter == total) { done() }
+      });
+    });
+  });
 
-//   describe("#downloadUrls", function () {
-//     it("should download all pending urls in the list", function (done) {
-//       var urlArray = ["www.example.com", "www.google.com"];
-//       archive.downloadUrls(urlArray);
+  describe("#downloadUrls", function () {
+    it("should download all pending urls in the list", function (done) {
+      var urlArray = ["www.example.com", "www.google.com"];
+      archive.downloadUrls(urlArray);
 
-//       // Ugly hack to wait for all downloads to finish.
-//       setTimeout(function () {
-//         expect(fs.readdirSync(archive.paths.archivedSites)).to.deep.equal(urlArray);
-//         done();
-//       }, 25);
-  //   });
-  // });
-// });
+      // Ugly hack to wait for all downloads to finish.
+      setTimeout(function () {
+        expect(fs.readdirSync(archive.paths.archivedSites)).to.deep.equal(urlArray);
+        done();
+      }, 25);
+    });
+  });
+});
 
